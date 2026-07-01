@@ -15,6 +15,8 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
+
 type YearlyData = {
     year: number;
     asset: number;
@@ -56,7 +58,7 @@ export default function SimulationPage() {
     const handleSimulation = async () => {
 
         try {
-            const res = await apiFetch("http://localhost:8080/api/simulation", {
+            const res = await apiFetch(`${API_BASE}/api/simulation`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -81,7 +83,7 @@ export default function SimulationPage() {
     const handleMonteCarlo = async () => {
         try {
 
-            const res = await apiFetch("http://localhost:8080/api/simulation/montecarlo", {
+            const res = await apiFetch(`${API_BASE}/api/simulation/montecarlo`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -129,7 +131,7 @@ export default function SimulationPage() {
 
         try {
 
-            const res = await apiFetch("http://localhost:8080/api/simulation/montecarlo/explain", {
+            const res = await apiFetch(`${API_BASE}/api/simulation/montecarlo/explain`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

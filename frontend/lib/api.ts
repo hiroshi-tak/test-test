@@ -1,8 +1,10 @@
 "use client";
 
-export async function apiFetch(url: string, options: RequestInit = {}) {
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
-    let res = await fetch(url, {
+export async function apiFetch(path: string, options: RequestInit = {}) {
+
+    let res = await fetch(`${API_BASE}${path}`, {
         ...options,
         credentials: "include",
         headers: {
@@ -14,14 +16,14 @@ export async function apiFetch(url: string, options: RequestInit = {}) {
     // AccessToken期限切れ
     if (res.status === 401 || res.status === 403) {
 
-        const refreshRes = await fetch("http://localhost:8080/api/auth/refresh", {
+        const refreshRes = await fetch(`${API_BASE}/api/auth/refresh`, {
             method: "POST",
             credentials: "include",
         });
 
         if (refreshRes.ok) {
             // もう一回リトライ
-            res = await fetch(url, {
+            res = await fetch(`${API_BASE}${path}`, {
                 ...options,
                 credentials: "include",
                 headers: {

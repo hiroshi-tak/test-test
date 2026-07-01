@@ -17,10 +17,14 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.security.core.Authentication;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+        @Value("${app.cookie.secure}")
+        private boolean cookieSecure;
 
         private final UserRepository userRepository;
         private final PasswordEncoder passwordEncoder;
@@ -72,7 +76,7 @@ public class AuthController {
 
                 ResponseCookie accessCookie = ResponseCookie.from("token", accessToken)
                         .httpOnly(true)
-                        .secure(false)
+                        .secure(cookieSecure)
                         .path("/")
                         .maxAge(60 * 15)
                         .sameSite("Lax")
@@ -80,7 +84,7 @@ public class AuthController {
 
                 ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
                         .httpOnly(true)
-                        .secure(false)
+                        .secure(cookieSecure)
                         .path("/")
                         .maxAge(60 * 60 * 24 * 7)
                         .sameSite("Lax")
@@ -108,7 +112,7 @@ public class AuthController {
 
                 ResponseCookie accessCookie = ResponseCookie.from("token", "")
                         .httpOnly(true)
-                        .secure(false)
+                        .secure(cookieSecure)
                         .path("/")
                         .sameSite("Lax")
                         .maxAge(0)
@@ -116,7 +120,7 @@ public class AuthController {
 
                 ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", "")
                         .httpOnly(true)
-                        .secure(false)
+                        .secure(cookieSecure)
                         .path("/")
                         .sameSite("Lax")
                         .maxAge(0)
@@ -137,7 +141,7 @@ public class AuthController {
 
                 ResponseCookie cookie = ResponseCookie.from("token", newAccessToken)
                         .httpOnly(true)
-                        .secure(false)
+                        .secure(cookieSecure)
                         .path("/")
                         .sameSite("Lax")
                         .maxAge(60 * 15)

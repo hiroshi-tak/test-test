@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
+
 export function useAuth() {
     const [status, setStatus] = useState<"loading" | "auth" | "guest">("loading");
     const router = useRouter();
 
     const fetchMe = async () => {
         try {
-            const res = await fetch("http://localhost:8080/api/auth/me", {
+            const res = await fetch(`${API_BASE}/api/auth/me`, {
                 credentials: "include",
             });
 
@@ -33,7 +35,7 @@ export function useAuth() {
     }, []);
 
     const login = async (username: string, password: string) => {
-        const res = await fetch("http://localhost:8080/api/auth/login", {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -52,7 +54,7 @@ export function useAuth() {
     };
 
     const logout = async () => {
-        await fetch("http://localhost:8080/api/auth/logout", {
+        await fetch(`${API_BASE}/api/auth/logout`, {
             method: "POST",
             credentials: "include",
         });

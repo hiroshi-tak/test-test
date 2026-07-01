@@ -2,36 +2,52 @@ services:
   db:
     image: postgres:16
     container_name: db
+    restart: always
     environment:
       POSTGRES_DB: nisa_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
     container_name: backend
-    ports:
-      - "8080:8080"
+    restart: always
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/nisa_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
-      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+      APP_COOKIE_SECURE: "false"
     env_file:
       - .env
     depends_on:
       - db
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     container_name: frontend
-    ports:
-      - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_BASE: http://localhost:8080
+    restart: always
     depends_on:
       - backend
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      #- "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  db_data:
